@@ -10,249 +10,520 @@ main {
     padding-bottom: 60px; /* Add padding to prevent footer overlap */
 }
 
-/* CSS Custom Properties (Variables) for Theming */
+/* Material 3 Inspired Custom Properties (Light Theme) */
 :root {
-    --primary-color: #007bff;
-    --secondary-color: #6c757d;
-    --light-color: #f8f9fa;
-    --dark-color: #343a40;
-    --border-radius: 5px;
-    --box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    --danger-color: #dc3545; /* Bootstrap's danger color */
+    /* Primary Palette (Example: Blue) */
+    --md-sys-color-primary: #00629F;
+    --md-sys-color-on-primary: #FFFFFF;
+    --md-sys-color-primary-container: #D0E4FF;
+    --md-sys-color-on-primary-container: #001D34;
+
+    /* Secondary Palette (Example: Muted Blue/Gray) */
+    --md-sys-color-secondary: #526070; /* Used for less prominent elements or accents */
+    --md-sys-color-on-secondary: #FFFFFF;
+    --md-sys-color-secondary-container: #D5E4F7; /* Used for tonal buttons, chips */
+    --md-sys-color-on-secondary-container: #0E1D2A;
+
+    /* Tertiary Palette (Optional - not heavily used in this app yet) */
+    /* Define if specific accent colors are needed beyond primary/secondary */
+    /* --md-sys-color-tertiary: #6A587A; */
+    /* --md-sys-color-on-tertiary: #FFFFFF; */
+    /* --md-sys-color-tertiary-container: #F1DAFF; */
+    /* --md-sys-color-on-tertiary-container: #251533; */
+
+    /* Neutral / Surface Palette */
+    --md-sys-color-background: #FCFCFF; /* Slightly off-white, common M3 background */
+    --md-sys-color-on-background: #1A1C1E;
+    --md-sys-color-surface: #FCFCFF; /* Cards, dialogs, menus */
+    --md-sys-color-on-surface: #1A1C1E; /* Text on surface */
+    --md-sys-color-on-surface-rgb: 26,28,30; /* RGB for #1A1C1E, used for hover states */
+    --md-sys-color-surface-variant: #DFE2EB; /* E.g. text field outlines, dividers */
+    --md-sys-color-on-surface-variant: #42474E; /* Text on surface variant */
+    --md-sys-color-outline: #73777F; /* Decorative outlines */
+    --md-sys-color-shadow: #000000;
+
+    /* Error Palette */
+    --md-sys-color-error: #B3261E;
+    --md-sys-color-on-error: #FFFFFF;
+    --md-sys-color-error-container: #F9DEDC;
+    --md-sys-color-on-error-container: #410E0B;
+    --md-sys-color-error-rgb: 179,38,30; /* RGB for #B3261E */
+
+    /* Typography */
+    --md-sys-font-family-body: 'Roboto', sans-serif;
+    --md-sys-font-weight-regular: 400;
+    --md-sys-font-weight-medium: 500;
+    --md-sys-font-weight-bold: 700;
+
+    /* Shape */
+    --md-sys-shape-corner-extra-small: 4px;
+    --md-sys-shape-corner-small: 8px;
+    --md-sys-shape-corner-medium: 12px;
+    --md-sys-shape-corner-large: 16px;
+    --md-sys-shape-corner-extra-large: 28px;
+    --md-sys-shape-corner-full: 9999px; /* Pill shape */
+
+    /* Elevation (shadows - simplified for now) */
+    --md-sys-elevation-level0: none;
+    --md-sys-elevation-level1: 0px 1px 3px 1px rgba(0,0,0,0.15), 0px 1px 2px 0px rgba(0,0,0,0.30);
+    --md-sys-elevation-level2: 0px 2px 6px 2px rgba(0,0,0,0.15), 0px 1px 2px 0px rgba(0,0,0,0.30);
+    --md-sys-elevation-level3: 0px 1px 3px 0px rgba(0,0,0,0.30), 0px 4px 8px 3px rgba(0,0,0,0.15);
+    --md-sys-elevation-level4: 0px 2px 3px 0px rgba(0,0,0,0.30), 0px 6px 10px 4px rgba(0,0,0,0.15);
+    --md-sys-elevation-level5: 0px 4px 4px 0px rgba(0,0,0,0.30), 0px 8px 12px 6px rgba(0,0,0,0.15);
+
+    /* Opacity levels (example) */
+    --md-sys-state-hover-state-layer-opacity: 0.08;
+    --md-sys-state-focus-state-layer-opacity: 0.12;
+    --md-sys-state-pressed-state-layer-opacity: 0.12;
+    --md-sys-state-dragged-state-layer-opacity: 0.16;
 }
 
+/* Dark Theme Overrides */
+[data-theme="dark"] {
+    --md-sys-color-primary: #A9C7FF; /* Lighter Blue for accessibility */
+    --md-sys-color-on-primary: #003062;
+    --md-sys-color-primary-container: #004788;
+    --md-sys-color-on-primary-container: #D6E3FF;
+
+    --md-sys-color-secondary: #BAC8DB;
+    --md-sys-color-on-secondary: #253140;
+    --md-sys-color-secondary-container: #3C4858;
+    --md-sys-color-on-secondary-container: #D6E4F7;
+
+    /* --md-sys-color-tertiary: #D7BEE0; */
+    /* --md-sys-color-on-tertiary: #3A2A47; */
+    /* --md-sys-color-tertiary-container: #51405F; */
+    /* --md-sys-color-on-tertiary-container: #F3DAFF; */
+
+    --md-sys-color-background: #1A1C1E; /* Dark background */
+    --md-sys-color-on-background: #E2E2E5; /* Light text */
+    --md-sys-color-surface: #1A1C1E; /* Dark surface for cards etc. */
+    --md-sys-color-on-surface: #E2E2E5; /* Light text on dark surface */
+    --md-sys-color-on-surface-rgb: 226,226,229; /* RGB for #E2E2E5 */
+
+
+    --md-sys-color-surface-variant: #42474E; /* Slightly lighter dark gray */
+    --md-sys-color-on-surface-variant: #C2C7CF; /* Light gray text */
+    --md-sys-color-outline: #8C9199; /* Medium gray outline */
+
+    --md-sys-color-error: #FFB4AB; /* Lighter red */
+    --md-sys-color-on-error: #690005;
+    --md-sys-color-error-container: #93000A;
+    --md-sys-color-on-error-container: #FFDAD6;
+    --md-sys-color-error-rgb: 255,180,171; /* RGB for #FFB4AB */
+}
+
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    background-color: var(--light-color);
-    color: var(--dark-color);
+    font-family: var(--md-sys-font-family-body);
+    line-height: 1.5; /* M3 often uses 1.5 for body, 1.2-1.4 for headlines */
+    background-color: var(--md-sys-color-background);
+    color: var(--md-sys-color-on-background);
+    margin: 0; /* Ensure no default margin */
+    padding: 0; /* Ensure no default padding */
+    transition: background-color 0.3s ease, color 0.3s ease; /* For theme toggle */
 }
 
 header {
-    background: var(--dark-color);
-    color: var(--light-color);
-    padding: 1rem 0;
-    text-align: center;
-    margin-bottom: 1rem;
-}
-
-#current-weather-description {
-    text-transform: capitalize;
-    margin-bottom: 0.5rem;
-    font-style: italic;
+    background: var(--md-sys-color-surface);
+    color: var(--md-sys-color-on-surface);
+    padding: 0.75rem 1rem; /* M3 top app bars often have 12-16dp padding */
+    margin-bottom: 1.5rem; /* Consistent spacing */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--md-sys-elevation-level2); /* Subtle shadow for header */
 }
 
 header h1 {
     margin: 0;
+    font-size: 1.375rem; /* M3 Title Large (22sp) */
+    font-weight: var(--md-sys-font-weight-regular); /* M3 Title often regular or medium */
+    line-height: 1.2;
 }
+
+#theme-toggle-button {
+    background-color: transparent;
+    color: var(--md-sys-color-on-surface);
+    border: 1px solid var(--md-sys-color-outline);
+    border-radius: var(--md-sys-shape-corner-full);
+    padding: 0.5rem; /* 8dp */
+    cursor: pointer;
+    font-size: 1.25rem; /* Adjust icon size */
+    line-height: 1;
+    width: 40px;  /* M3 icon button min size 40x40dp */
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+#theme-toggle-button:hover {
+    background-color: rgba(var(--md-sys-color-on-surface-rgb), var(--md-sys-state-hover-state-layer-opacity));
+}
+
+#theme-toggle-button:focus {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
+}
+
 
 #search-section {
     display: flex;
+    flex-wrap: wrap; /* Allow items to wrap */
     justify-content: center;
-    align-items: center;
-    margin-bottom: 2rem;
-    gap: 0.5rem; /* Space between input and button */
+    align-items: center; /* Align items vertically */
+    margin: 1.5rem auto; /* Consistent margin */
+    padding: 0 1rem; /* Padding for smaller screens */
+    gap: 0.75rem; /* 12dp gap */
+    max-width: 700px; /* Max width for search area */
 }
 
 #city-input {
-    padding: 0.75rem;
-    border: 1px solid #ccc;
-    border-radius: var(--border-radius);
-    font-size: 1rem;
-    width: 300px;
-    max-width: 70%;
+    flex-grow: 1; /* Allow input to take available space */
+    min-width: 200px; /* Min width before wrapping */
+    padding: 0.875rem 1rem; /* 14dp top/bottom, 16dp left/right for M3 filled text field like padding */
+    font-size: 1rem; /* M3 Body Large */
+    color: var(--md-sys-color-on-surface);
+    background-color: var(--md-sys-color-surface-variant); /* M3 Filled text field style */
+    border: none; /* Remove default border */
+    border-bottom: 1px solid var(--md-sys-color-on-surface-variant); /* M3 like underline */
+    border-radius: var(--md-sys-shape-corner-extra-small) var(--md-sys-shape-corner-extra-small) 0 0; /* Top corners rounded */
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease; /* Added box-shadow transition */
 }
 
-#search-button, #geolocation-button {
-    padding: 0.75rem 1.5rem;
-    background-color: var(--primary-color);
-    color: white;
+#city-input:hover {
+    border-bottom-color: var(--md-sys-color-on-surface); /* Darken underline on hover */
+    background-color: color-mix(in srgb, var(--md-sys-color-surface-variant) 95%, var(--md-sys-color-on-surface)); /* Slight bg change */
+}
+
+#city-input::placeholder {
+    color: var(--md-sys-color-on-surface-variant);
+    opacity: 0.7;
+}
+
+#city-input:focus {
+    outline: none;
+    border-bottom: 2px solid var(--md-sys-color-primary);
+    background-color: color-mix(in srgb, var(--md-sys-color-surface-variant) 95%, var(--md-sys-color-on-surface));
+}
+
+/* Base styles for M3-like buttons */
+.m3-button {
+    padding: 0.625rem 1.5rem; /* 10px 24px */
+    border-radius: var(--md-sys-shape-corner-full); /* Pill shape */
+    font-size: 0.875rem; /* M3 Label Large */
+    font-weight: var(--md-sys-font-weight-medium);
     border: none;
-    border-radius: var(--border-radius);
-    font-size: 1rem;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    text-transform: none; /* M3 buttons often sentence case */
+    min-height: 40px; /* 40dp standard height */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--md-sys-elevation-level0);
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+.m3-button:hover {
+    box-shadow: var(--md-sys-elevation-level1);
+}
+.m3-button:active {
+    box-shadow: var(--md-sys-elevation-level0);
+}
+.m3-button:focus-visible { /* For keyboard focus */
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
 }
 
-#search-button:hover, #geolocation-button:hover {
-    background-color: #0056b3; /* Darker shade of primary color */
+
+/* Filled button style (for primary actions like Search) */
+.m3-button-filled {
+    background-color: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
 }
+.m3-button-filled:hover {
+    background-color: color-mix(in srgb, var(--md-sys-color-primary) 90%, #000000); /* Darken slightly */
+}
+
+
+/* Tonal button style (for secondary actions like Geolocation) */
+.m3-button-tonal {
+    background-color: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+}
+.m3-button-tonal:hover {
+    background-color: color-mix(in srgb, var(--md-sys-color-secondary-container) 90%, var(--md-sys-color-on-secondary-container));
+}
+
+
+/* Apply styles to specific buttons by ID - we will add classes in HTML later if possible, for now ID styling */
+#search-button {
+    /* Applying .m3-button-filled styles */
+    padding: 0.625rem 1.5rem;
+    border-radius: var(--md-sys-shape-corner-full);
+    font-size: 0.875rem;
+    font-weight: var(--md-sys-font-weight-medium);
+    border: none;
+    cursor: pointer;
+    text-transform: none;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--md-sys-elevation-level0);
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    background-color: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+}
+#search-button:hover {
+    box-shadow: var(--md-sys-elevation-level1);
+    background-color: color-mix(in srgb, var(--md-sys-color-primary) 90%, #000000);
+}
+#search-button:active {
+    box-shadow: var(--md-sys-elevation-level0);
+}
+#search-button:focus-visible {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
+}
+
 
 #geolocation-button {
-    background-color: var(--secondary-color); /* Different color for distinction */
+    /* Applying .m3-button-tonal styles */
+    padding: 0.625rem 1.5rem;
+    border-radius: var(--md-sys-shape-corner-full);
+    font-size: 0.875rem;
+    font-weight: var(--md-sys-font-weight-medium);
+    border: none;
+    cursor: pointer;
+    text-transform: none;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--md-sys-elevation-level0);
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    background-color: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
 }
-
 #geolocation-button:hover {
-    background-color: #545b62; /* Darker shade of secondary */
+    box-shadow: var(--md-sys-elevation-level1);
+    background-color: color-mix(in srgb, var(--md-sys-color-secondary-container) 90%, var(--md-sys-color-on-secondary-container));
+}
+#geolocation-button:active {
+    box-shadow: var(--md-sys-elevation-level0);
+}
+#geolocation-button:focus-visible {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
 }
 
+/* #current-weather-description - will be handled by .weather-card p */
 
-#current-weather-section, #forecast-section {
-    margin-bottom: 2rem;
-    padding: 1rem;
-    background-color: #fff;
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
-}
-
-#current-weather-section h2, #forecast-section h2 {
+/* Section Titles (Current Weather, 5-Day Forecast) */
+#current-weather-section h2,
+#forecast-section h2,
+#recent-searches-section h3 { /* Include recent searches title */
     text-align: center;
+    font-size: 1.25rem; /* M3 Title Medium */
+    font-weight: var(--md-sys-font-weight-regular);
+    color: var(--md-sys-color-on-surface-variant);
     margin-bottom: 1rem;
-    color: var(--primary-color);
+    margin-top: 1.5rem; /* Space above section titles */
+}
+#recent-searches-section h3 { /* Specific adjustment for recent searches if needed */
+    margin-top: 0;
 }
 
+
+/* Card Styling (Base for current weather and forecast cards) */
 .weather-card {
-    background-color: var(--light-color);
-    border: 1px solid #ddd;
-    border-radius: var(--border-radius);
-    padding: 1rem;
+    background-color: var(--md-sys-color-surface);
+    border-radius: var(--md-sys-shape-corner-medium); /* 12px */
+    padding: 1rem; /* 16dp */
     text-align: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: var(--md-sys-elevation-level1);
+    margin-bottom: 1rem; /* Space between cards if they stack */
+    transition: box-shadow 0.2s ease;
+}
+.weather-card:hover {
+    box-shadow: var(--md-sys-elevation-level2);
 }
 
 #current-weather-section .weather-card {
-    max-width: 400px; /* Or your preferred max-width */
-    margin: 0 auto; /* Center the current weather card */
+    max-width: 450px; /* Adjusted max-width */
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.weather-card h3, .weather-card h4 {
+.weather-card h3 { /* City Name */
+    font-size: 1.5rem; /* M3 Headline Small */
+    font-weight: var(--md-sys-font-weight-medium);
+    color: var(--md-sys-color-on-surface);
     margin-top: 0;
-    color: var(--secondary-color);
+    margin-bottom: 0.25rem;
+}
+.weather-card h4 { /* Forecast Date */
+    font-size: 1rem; /* M3 Title Small */
+    font-weight: var(--md-sys-font-weight-medium);
+    color: var(--md-sys-color-on-surface-variant);
+    margin-top: 0;
+    margin-bottom: 0.5rem;
 }
 
 .weather-card p {
-    font-size: 0.9rem;
+    font-size: 0.875rem; /* M3 Body Medium */
+    color: var(--md-sys-color-on-surface-variant);
     margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+.weather-card p span { /* For the actual data values */
+    color: var(--md-sys-color-on-surface);
+    font-weight: var(--md-sys-font-weight-medium);
+}
+#current-weather-description { /* Specific styling for description */
+    font-size: 1.125rem; /* M3 Body Large */
+    color: var(--md-sys-color-on-surface);
+    text-transform: capitalize;
+    margin: 0.75rem 0;
+    font-style: normal; /* Remove previous italic */
 }
 
-.weather-card img {
-    width: 50px; /* Adjust as needed */
-    height: 50px;
+
+.weather-card img { /* Weather Icons */
+    width: 64px; /* Slightly larger for M3 feel */
+    height: 64px;
     margin-bottom: 0.5rem;
+    /* Consider filter if icons look too harsh, e.g. filter: brightness(0.9) contrast(1.1); */
 }
 
 .forecast-cards-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); /* Adjusted minmax */
+    gap: 1rem; /* 16dp */
+    padding: 0 1rem; /* Padding around the forecast container */
 }
 
 .forecast-card {
-    /* Specific styles for forecast cards if needed */
+    /* Inherits .weather-card styles. Specific forecast card styles below if needed */
+}
+.forecast-card p { /* Temp display in forecast */
+    font-size: 1rem; /* M3 Body Large for temp */
+    font-weight: var(--md-sys-font-weight-medium);
+    color: var(--md-sys-color-on-surface);
 }
 
+
+/* UI Feedback Section (Loading, Errors) */
 #ui-feedback-section {
     text-align: center;
-    margin: 1rem auto;
-    max-width: 400px; /* Align with current weather card width */
+    margin: 1.5rem auto;
+    padding: 0 1rem;
+    max-width: 450px;
 }
 
 #loading-indicator {
-    padding: 0.5rem;
-    background-color: var(--primary-color-light, #e0efff); /* Lighter primary or a specific loading bg */
-    color: var(--primary-color);
-    border-radius: var(--border-radius);
-    margin-bottom: 0.5rem;
+    padding: 0.75rem 1rem;
+    background-color: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+    border-radius: var(--md-sys-shape-corner-small);
+    margin-bottom: 1rem;
+    font-size: 0.875rem; /* M3 Label Large */
 }
 
 .error-box {
-    padding: 0.75rem;
-    background-color: #f8d7da; /* Bootstrap danger background */
-    color: #721c24; /* Bootstrap danger text */
-    border: 1px solid #f5c6cb; /* Bootstrap danger border */
-    border-radius: var(--border-radius);
-    margin-bottom: 1rem; /* Space below the error message */
+    padding: 0.75rem 1rem;
+    background-color: var(--md-sys-color-error-container);
+    color: var(--md-sys-color-on-error-container);
+    border: 1px solid var(--md-sys-color-error); /* Subtle border */
+    border-radius: var(--md-sys-shape-corner-small);
+    margin-bottom: 1rem;
+    font-size: 0.875rem; /* M3 Label Large */
 }
 
 .hidden {
     display: none !important;
 }
 
-/* Dynamic Weather Backgrounds/Styles */
-body.weather-sunny {
-    background-color: #87CEEB; /* Sky Blue */
-    /* background-image: url('path/to/sunny-image.jpg'); */
-    transition: background-color 0.5s ease-in-out;
-}
-
-body.weather-cloudy {
-    background-color: #B0C4DE; /* Light Steel Blue */
-    /* background-image: url('path/to/cloudy-image.jpg'); */
-    transition: background-color 0.5s ease-in-out;
-}
-
-body.weather-rainy {
-    background-color: #778899; /* Light Slate Gray */
-    /* background-image: url('path/to/rainy-image.jpg'); */
-    transition: background-color 0.5s ease-in-out;
-}
-
-body.weather-snowy {
-    background-color: #FFFAFA; /* Snow */
-    /* background-image: url('path/to/snowy-image.jpg'); */
-    transition: background-color 0.5s ease-in-out;
-}
-
-body.weather-default {
-    background-color: var(--light-color); /* Default from :root */
-    transition: background-color 0.5s ease-in-out;
-}
-
 /* Recent Searches Section */
 #recent-searches-section {
     margin: 1.5rem auto;
     padding: 1rem;
-    background-color: #fff;
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
-    max-width: 600px; /* Adjust as needed */
+    /* Can be styled like a card or a distinct region */
+    background-color: var(--md-sys-color-surface-variant); /* Different background */
+    border-radius: var(--md-sys-shape-corner-large); /* More rounded for a distinct section */
+    max-width: 700px;
     text-align: center;
-}
-
-#recent-searches-section h3 {
-    margin-bottom: 0.75rem;
-    color: var(--primary-color);
 }
 
 #recent-searches-buttons button {
-    background-color: var(--secondary-color);
-    color: white;
+    /* Applying .m3-button-tonal styles */
+    padding: 0.5rem 1rem; /* Slightly smaller for history buttons */
+    border-radius: var(--md-sys-shape-corner-full);
+    font-size: 0.875rem;
+    font-weight: var(--md-sys-font-weight-medium);
     border: none;
-    border-radius: var(--border-radius);
-    padding: 0.5rem 1rem;
-    margin: 0.25rem;
     cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
+    text-transform: none;
+    min-height: 36px; /* Slightly smaller */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--md-sys-elevation-level0);
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    background-color: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+    margin: 0.25rem;
+}
+#recent-searches-buttons button:hover {
+    box-shadow: var(--md-sys-elevation-level1);
+    background-color: color-mix(in srgb, var(--md-sys-color-secondary-container) 90%, var(--md-sys-color-on-secondary-container));
+}
+#recent-searches-buttons button:active {
+    box-shadow: var(--md-sys-elevation-level0);
+}
+#recent-searches-buttons button:focus-visible {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
 }
 
-#recent-searches-buttons button:hover {
-    background-color: #545b62; /* Darker shade of secondary */
-}
 
 #clear-history-button {
-    margin-top: 0.75rem;
-    background-color: var(--danger-color, #dc3545); /* Define --danger-color or use fallback */
-    color: white;
-    padding: 0.5rem 1rem;
+    /* M3 Text Button style with error color */
+    background-color: transparent;
+    color: var(--md-sys-color-error);
+    padding: 0.625rem 0.75rem; /* 10px 12dp */
+    border-radius: var(--md-sys-shape-corner-full);
+    font-size: 0.875rem;
+    font-weight: var(--md-sys-font-weight-medium);
     border: none;
-    border-radius: var(--border-radius);
-    font-size: 0.9rem;
     cursor: pointer;
+    min-height: 40px;
+    margin-top: 0.75rem;
+    transition: background-color 0.2s ease;
+}
+#clear-history-button:hover {
+    background-color: rgba(var(--md-sys-color-error-rgb), var(--md-sys-state-hover-state-layer-opacity));
+    /* Requires --md-sys-color-error-rgb, e.g., for #B3261E it's 179,38,30 */
+}
+#clear-history-button:focus-visible {
+    outline: 2px solid var(--md-sys-color-error);
+    outline-offset: 2px;
 }
 
-#clear-history-button:hover {
-    background-color: #c82333; /* Darker danger color */
-}
 
 footer {
     text-align: center;
-    padding: 1rem 0;
-    background: var(--dark-color);
-    color: var(--light-color);
-    position: fixed;
-    bottom: 0;
-    width: 100%;
+    padding: 1.5rem 1rem; /* More padding */
+    background-color: var(--md-sys-color-surface-variant); /* Consistent with M3 surface hierarchy */
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: 0.875rem; /* M3 Body Medium or Small */
     margin-top: 2rem; /* Ensure space above footer */
+    /* Remove fixed positioning to allow natural flow with content */
+    /* position: fixed; */
+    /* bottom: 0; */
+    /* width: 100%; */
 }
 
 /* Responsive adjustments */
