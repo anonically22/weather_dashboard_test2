@@ -158,6 +158,36 @@ header h1 {
     display: none !important;
 }
 
+/* Dynamic Weather Backgrounds/Styles */
+body.weather-sunny {
+    background-color: #87CEEB; /* Sky Blue */
+    /* background-image: url('path/to/sunny-image.jpg'); */
+    transition: background-color 0.5s ease-in-out;
+}
+
+body.weather-cloudy {
+    background-color: #B0C4DE; /* Light Steel Blue */
+    /* background-image: url('path/to/cloudy-image.jpg'); */
+    transition: background-color 0.5s ease-in-out;
+}
+
+body.weather-rainy {
+    background-color: #778899; /* Light Slate Gray */
+    /* background-image: url('path/to/rainy-image.jpg'); */
+    transition: background-color 0.5s ease-in-out;
+}
+
+body.weather-snowy {
+    background-color: #FFFAFA; /* Snow */
+    /* background-image: url('path/to/snowy-image.jpg'); */
+    transition: background-color 0.5s ease-in-out;
+}
+
+body.weather-default {
+    background-color: var(--light-color); /* Default from :root */
+    transition: background-color 0.5s ease-in-out;
+}
+
 
 footer {
     text-align: center;
