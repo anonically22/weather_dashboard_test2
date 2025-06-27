@@ -355,44 +355,8 @@ function displayCurrentWeather(data) {
         currentWeatherIcon.src = "http://openweathermap.org/img/wn/01d@2x.png"; // Default icon
     }
     console.log("Displayed current weather for:", data.name);
-    updateWeatherStyling(data.weather && data.weather.length > 0 ? data.weather[0].main : null);
+    // updateWeatherStyling(data.weather && data.weather.length > 0 ? data.weather[0].main : null); // Disabled for M3
 }
-
-/**
- * Updates body class based on weather conditions for dynamic styling.
- * @param {string|null} weatherMain The main weather condition (e.g., "Clear", "Clouds", "Rain").
- */
-function updateWeatherStyling(weatherMain) {
-    const body = document.body;
-    // Remove any existing weather classes
-    body.classList.remove('weather-sunny', 'weather-cloudy', 'weather-rainy', 'weather-snowy', 'weather-default');
-
-    if (!weatherMain) {
-        body.classList.add('weather-default');
-        return;
-    }
-
-    switch (weatherMain.toLowerCase()) {
-        case 'clear':
-            body.classList.add('weather-sunny');
-            break;
-        case 'clouds':
-            body.classList.add('weather-cloudy');
-            break;
-        case 'rain':
-        case 'drizzle':
-        case 'thunderstorm':
-            body.classList.add('weather-rainy');
-            break;
-        case 'snow':
-            body.classList.add('weather-snowy');
-            break;
-        default:
-            body.classList.add('weather-default'); // For Mist, Smoke, Haze, Dust, Fog, Sand, Ash, Squall, Tornado etc.
-            break;
-    }
-}
-
 
 /**
  * Displays an error message to the user.
@@ -415,7 +379,7 @@ function displayError(message) {
     currentVisibility.textContent = "--";
     currentWeatherIcon.src = "http://openweathermap.org/img/wn/10d@2x.png"; // Default icon
     currentWeatherIcon.alt = "Weather icon";
-    updateWeatherStyling(null); // Reset to default styling on error
+    // updateWeatherStyling(null); // Disabled for M3 - theme will handle background
 }
 
 // --- Event Listeners ---
@@ -448,9 +412,57 @@ cityInput.addEventListener('keypress', (event) => {
 
 // Initial page load setup
 document.addEventListener('DOMContentLoaded', () => {
-    updateWeatherStyling(null); // Set default background on load
+    // updateWeatherStyling(null); // Styling is handled by theme function now
     displaySearchHistory(); // Display search history on load
+    initializeTheme(); // Initialize theme on load
 });
+
+// --- Theme Toggle Functionality ---
+const themeToggleButton = document.getElementById('theme-toggle-button');
+const THEME_KEY = 'weatherAppTheme';
+
+function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
+    if (themeToggleButton) {
+        themeToggleButton.textContent = theme === 'dark' ? '☀️' : '🌓'; // Update icon
+    }
+    // Update dynamic body background based on weather AFTER theme is set
+    // This needs access to current weather data, so might be better to call updateWeatherStyling
+    // from displayCurrentWeather, ensuring it respects the current data-theme.
+    // For now, theme change will re-apply base background. Weather-specific body bg might need a re-trigger.
+    // The body.weather-sunny etc. classes might need to be aware of the theme.
+    // Or, we remove body.weather-sunny and rely on M3 component colors.
+    // For now, let's assume updateWeatherStyling is called by displayCurrentWeather and will use the new theme vars.
+    // The dynamic body background classes (weather-sunny etc.) will need their colors defined for dark theme too, or be removed.
+    // Let's simplify for now: the main body background will just be --md-sys-color-background.
+    // The dynamic weather-specific body backgrounds will be disabled for this M3 refactor to maintain consistency.
+    const body = document.body;
+    body.classList.remove('weather-sunny', 'weather-cloudy', 'weather-rainy', 'weather-snowy', 'weather-default');
+    // No, updateWeatherStyling should be responsible for this, and it should be called from displayCurrentWeather
+}
+
+function initializeTheme() {
+    const savedTheme = localStorage.getItem(THEME_KEY);
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (savedTheme) {
+        setTheme(savedTheme);
+    } else if (prefersDark) {
+        setTheme('dark');
+    } else {
+        setTheme('light'); // Default to light if no preference or saved theme
+    }
+}
+
+if (themeToggleButton) {
+    themeToggleButton.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        setTheme(newTheme);
+    });
+}
+
 
 // --- Event Listener for Clear History Button ---
 if (clearHistoryButton) {
