@@ -18,6 +18,7 @@ main {
     --dark-color: #343a40;
     --border-radius: 5px;
     --box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    --danger-color: #dc3545; /* Bootstrap's danger color */
 }
 
 body {
@@ -62,7 +63,7 @@ header h1 {
     max-width: 70%;
 }
 
-#search-button {
+#search-button, #geolocation-button {
     padding: 0.75rem 1.5rem;
     background-color: var(--primary-color);
     color: white;
@@ -73,9 +74,18 @@ header h1 {
     transition: background-color 0.3s ease;
 }
 
-#search-button:hover {
+#search-button:hover, #geolocation-button:hover {
     background-color: #0056b3; /* Darker shade of primary color */
 }
+
+#geolocation-button {
+    background-color: var(--secondary-color); /* Different color for distinction */
+}
+
+#geolocation-button:hover {
+    background-color: #545b62; /* Darker shade of secondary */
+}
+
 
 #current-weather-section, #forecast-section {
     margin-bottom: 2rem;
@@ -188,6 +198,51 @@ body.weather-default {
     transition: background-color 0.5s ease-in-out;
 }
 
+/* Recent Searches Section */
+#recent-searches-section {
+    margin: 1.5rem auto;
+    padding: 1rem;
+    background-color: #fff;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    max-width: 600px; /* Adjust as needed */
+    text-align: center;
+}
+
+#recent-searches-section h3 {
+    margin-bottom: 0.75rem;
+    color: var(--primary-color);
+}
+
+#recent-searches-buttons button {
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 0.5rem 1rem;
+    margin: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+#recent-searches-buttons button:hover {
+    background-color: #545b62; /* Darker shade of secondary */
+}
+
+#clear-history-button {
+    margin-top: 0.75rem;
+    background-color: var(--danger-color, #dc3545); /* Define --danger-color or use fallback */
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+#clear-history-button:hover {
+    background-color: #c82333; /* Darker danger color */
+}
 
 footer {
     text-align: center;
