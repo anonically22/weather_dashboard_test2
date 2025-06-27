@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Weather Dashboard</h1>
+    </header>
+    <main>
+        <section id="search-section">
+            <input type="text" id="city-input" placeholder="Enter city name">
+            <button id="search-button">Search</button>
+        </section>
+
+        <section id="current-weather-section">
+            <h2>Current Weather</h2>
+            <div class="weather-card">
+                <h3 id="current-city-name">City Name</h3>
+                <p id="current-date">Date</p>
+                <img id="current-weather-icon" src="http://openweathermap.org/img/wn/10d@2x.png" alt="Weather icon">
+                <p>Temperature: <span id="current-temp">--</span>°C</p>
+                <p>Humidity: <span id="current-humidity">--</span>%</p>
+                <p>Wind Speed: <span id="current-wind">--</span> m/s</p>
+            </div>
+        </section>
+
+        <section id="forecast-section">
+            <h2>5-Day Forecast</h2>
+            <div class="forecast-cards-container">
+                <div class="weather-card forecast-card">
+                    <h4>Date 1</h4>
+                    <img src="http://openweathermap.org/img/wn/01d@2x.png" alt="Weather icon">
+                    <p>Temp: --°C</p>
+                    <p>Wind: -- m/s</p>
+                    <p>Humidity: --%</p>
+                </div>
+                <div class="weather-card forecast-card">
+                    <h4>Date 2</h4>
+                    <img src="http://openweathermap.org/img/wn/02d@2x.png" alt="Weather icon">
+                    <p>Temp: --°C</p>
+                    <p>Wind: -- m/s</p>
+                    <p>Humidity: --%</p>
+                </div>
+                <div class="weather-card forecast-card">
+                    <h4>Date 3</h4>
+                    <img src="http://openweathermap.org/img/wn/03d@2x.png" alt="Weather icon">
+                    <p>Temp: --°C</p>
+                    <p>Wind: -- m/s</p>
+                    <p>Humidity: --%</p>
+                </div>
+                <div class="weather-card forecast-card">
+                    <h4>Date 4</h4>
+                    <img src="http://openweathermap.org/img/wn/04d@2x.png" alt="Weather icon">
+                    <p>Temp: --°C</p>
+                    <p>Wind: -- m/s</p>
+                    <p>Humidity: --%</p>
+                </div>
+                <div class="weather-card forecast-card">
+                    <h4>Date 5</h4>
+                    <img src="http://openweathermap.org/img/wn/09d@2x.png" alt="Weather icon">
+                    <p>Temp: --°C</p>
+                    <p>Wind: -- m/s</p>
+                    <p>Humidity: --%</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Weather Dashboard</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
