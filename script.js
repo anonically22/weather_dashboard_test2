@@ -10,6 +10,9 @@ console.log("Weather Dashboard script loaded. API Key set.");
 // --- DOM Element Selectors ---
 const cityInput = document.getElementById('city-input');
 const searchButton = document.getElementById('search-button');
+const geolocationButton = document.getElementById('geolocation-button');
+const recentSearchesButtonsDiv = document.getElementById('recent-searches-buttons');
+const clearHistoryButton = document.getElementById('clear-history-button');
 
 // Current Weather Display Elements
 const currentCityName = document.getElementById('current-city-name');
@@ -48,6 +51,20 @@ async function getCurrentWeather(city) {
         return;
     }
 
+    const cacheKey = `current_${city.toLowerCase()}`;
+    const cachedData = getCachedApiData(cacheKey);
+
+    if (cachedData) {
+        displayCurrentWeather(cachedData);
+        // Need to fetch forecast even if current weather is cached,
+        // unless forecast is also cached based on same city name / coords.
+        // Let's assume forecast cache will be checked within getFiveDayForecast.
+        // We need lat/lon from cachedData for the forecast call.
+        await getFiveDayForecast(cachedData.name || city, cachedData.coord.lat, cachedData.coord.lon);
+        loadingIndicator.classList.add('hidden'); // Hide loader after processing cached data + new forecast
+        return;
+    }
+
     const fullApiUrl = `${API_URL_CURRENT}?q=${city}&appid=${API_KEY}&units=metric`;
 
     try {
@@ -79,6 +96,15 @@ async function getCurrentWeather(city) {
         if (data.cod && data.cod !== 200) {
             throw new Error(data.message || "An unexpected error occurred with the weather service fetching current weather.");
         }
+
+        // Save the successfully searched city name (from API response for consistency) to history
+        // Only do this if 'city' was the primary search term, not from a geo lookup that might also call this.
+        // The 'city' param to getCurrentWeather is the user's input.
+        // 'data.name' is what the API returned.
+        if (city && city.trim().length > 0) { // Ensure it was a city name search
+             saveSearchToHistory(data.name);
+        }
+        setCachedApiData(cacheKey, data); // Cache the fetched data
         displayCurrentWeather(data);
         // After successfully getting current weather, fetch forecast
         // Pass city name for display purposes if needed, lat/lon for accuracy
@@ -105,9 +131,20 @@ async function getFiveDayForecast(city, lat, lon) {
     // For now, assuming the main loading indicator is still active or we don't show a separate one.
     // errorMessageDiv.classList.add('hidden'); // Errors are handled by displayError primarily
 
+    // Using lat/lon for forecast cache key as it's more precise
+    const cacheKey = `forecast_${lat.toFixed(2)}_${lon.toFixed(2)}`;
+    const cachedData = getCachedApiData(cacheKey);
+
+    if (cachedData) {
+        const processedForecast = processForecastData(cachedData.list); // Process raw list data from cache
+        displayFiveDayForecast(processedForecast);
+        console.log("5-Day Forecast data from CACHE:", cachedData);
+        console.log("Processed 5-Day Forecast from CACHE:", processedForecast);
+        loadingIndicator.classList.add('hidden'); // Hide loader after displaying cached forecast
+        return;
+    }
+
     const fullApiUrl = `${API_URL_FORECAST}?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
-    // Or by city name: const fullApiUrl = `${API_URL_FORECAST}?q=${city}&appid=${API_KEY}&units=metric`;
-    // Using lat/lon from current weather is generally more precise.
 
     try {
         const response = await fetch(fullApiUrl);
@@ -129,10 +166,11 @@ async function getFiveDayForecast(city, lat, lon) {
              throw new Error(data.message || "An unexpected error occurred with the forecast service.");
         }
 
+        setCachedApiData(cacheKey, data); // Cache the raw forecast data (which includes data.list)
         const processedForecast = processForecastData(data.list);
-        displayFiveDayForecast(processedForecast); // This function will be implemented next
-        console.log("5-Day Forecast data:", data); // For debugging
-        console.log("Processed 5-Day Forecast:", processedForecast); // For debugging
+        displayFiveDayForecast(processedForecast);
+        console.log("5-Day Forecast data from API:", data); // For debugging
+        console.log("Processed 5-Day Forecast from API:", processedForecast); // For debugging
 
     } catch (error) {
         console.error("Error in getFiveDayForecast:", error);
@@ -407,4 +445,258 @@ cityInput.addEventListener('keypress', (event) => {
 // Initial page load setup
 document.addEventListener('DOMContentLoaded', () => {
     updateWeatherStyling(null); // Set default background on load
+    displaySearchHistory(); // Display search history on load
 });
+
+// --- Event Listener for Clear History Button ---
+if (clearHistoryButton) {
+    clearHistoryButton.addEventListener('click', () => {
+        localStorage.removeItem(SEARCH_HISTORY_KEY);
+        displaySearchHistory(); // Update UI to show empty history
+    });
+}
+
+// --- Geolocation Functions ---
+
+/**
+ * Gets the user's current geolocation coordinates.
+ * @returns {Promise<GeolocationCoordinates>} A promise that resolves with the coordinates object or rejects with an error.
+ */
+function getUserLocation() {
+    return new Promise((resolve, reject) => {
+        if (!navigator.geolocation) {
+            reject(new Error("Geolocation is not supported by your browser."));
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                resolve(position.coords);
+            },
+            (error) => {
+                let message = "Error getting location: ";
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        message += "User denied the request for Geolocation.";
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        message += "Location information is unavailable.";
+                        break;
+                    case error.TIMEOUT:
+                        message += "The request to get user location timed out.";
+                        break;
+                    default:
+                        message += "An unknown error occurred.";
+                        break;
+                }
+                reject(new Error(message));
+            }
+        );
+    });
+}
+
+
+// --- Weather Fetching by Coordinates ---
+/**
+ * Fetches current weather and forecast using geographic coordinates.
+ * @param {number} lat Latitude.
+ * @param {number} lon Longitude.
+ */
+async function getWeatherByCoords(lat, lon) {
+    loadingIndicator.classList.remove('hidden'); // Ensure loader is visible
+    errorMessageDiv.classList.add('hidden');
+    errorMessageDiv.textContent = '';
+
+    const cacheKey = `current_coords_${lat.toFixed(2)}_${lon.toFixed(2)}`; // Create a key from coords
+    const cachedData = getCachedApiData(cacheKey);
+
+    if (cachedData) {
+        displayCurrentWeather(cachedData);
+        const cityNameForDisplay = cachedData.name || "Current Location";
+        cityInput.value = cityNameForDisplay;
+        await getFiveDayForecast(cityNameForDisplay, lat, lon); // Forecast also needs caching
+        loadingIndicator.classList.add('hidden');
+        return;
+    }
+
+    const fullApiUrlCurrent = `${API_URL_CURRENT}?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
+
+    try {
+        // Fetch current weather by coordinates
+        const responseCurrent = await fetch(fullApiUrlCurrent);
+        if (!responseCurrent.ok) {
+            let apiErrorMessage = `HTTP error ${responseCurrent.status}`;
+            try {
+                const errorData = await responseCurrent.json();
+                apiErrorMessage = errorData.message || apiErrorMessage;
+            } catch (e) { /* Ignore if error response isn't JSON */ }
+            throw new Error(`Failed to fetch current weather by coordinates: ${apiErrorMessage}`);
+        }
+        const currentData = await responseCurrent.json();
+        if (currentData.cod && currentData.cod !== 200) {
+            throw new Error(currentData.message || "Error from weather service fetching current weather by coordinates.");
+        }
+
+        setCachedApiData(cacheKey, currentData); // Cache the fetched data
+        displayCurrentWeather(currentData); // Display current weather
+
+        // City name from current weather response by coords might be useful for display or history if we decide to save it
+        const cityNameForDisplay = currentData.name || "Current Location";
+        cityInput.value = cityNameForDisplay; // Update search bar with city name found by geo
+
+        // Fetch 5-day forecast using the same coordinates
+        // getFiveDayForecast will handle its own loading indicator if needed, or use the global one.
+        // It also hides the global loadingIndicator in its finally block.
+        await getFiveDayForecast(cityNameForDisplay, lat, lon);
+
+    } catch (error) {
+        console.error("Error in getWeatherByCoords:", error);
+        displayError(error.message);
+        clearFiveDayForecastDisplay(); // Clear forecast if current weather by coords fails mid-way or forecast fails
+        loadingIndicator.classList.add('hidden'); // Explicitly hide loader on error
+    }
+    // Note: getFiveDayForecast has its own finally block to hide the loader.
+    // If getWeatherByCoords fails before calling getFiveDayForecast, the catch block here handles hiding it.
+}
+
+// --- LocalStorage Search History Functions ---
+const SEARCH_HISTORY_KEY = 'weatherSearchHistory';
+const MAX_HISTORY_ITEMS = 5;
+
+// --- API Cache Configuration ---
+const CACHE_PREFIX = 'weatherApiCache_';
+const CACHE_DURATION_MS = 10 * 60 * 1000; // 10 minutes
+
+// --- Cache Helper Functions ---
+/**
+ * Retrieves an item from the API cache if it's valid.
+ * @param {string} key The cache key.
+ * @returns {object|null} The cached data or null if not found or expired.
+ */
+function getCachedApiData(key) {
+    const itemStr = localStorage.getItem(CACHE_PREFIX + key);
+    if (!itemStr) {
+        return null;
+    }
+    try {
+        const item = JSON.parse(itemStr);
+        const now = new Date().getTime();
+        if (now - item.timestamp < CACHE_DURATION_MS) {
+            console.log("Cache hit for:", key);
+            return item.data;
+        } else {
+            console.log("Cache expired for:", key);
+            localStorage.removeItem(CACHE_PREFIX + key); // Remove expired item
+            return null;
+        }
+    } catch (error) {
+        console.error("Error parsing cache data for key:", key, error);
+        return null; // Treat parse error as cache miss
+    }
+}
+
+/**
+ * Stores an item in the API cache.
+ * @param {string} key The cache key.
+ * @param {object} data The data to cache.
+ */
+function setCachedApiData(key, data) {
+    const item = {
+        data: data,
+        timestamp: new Date().getTime()
+    };
+    try {
+        localStorage.setItem(CACHE_PREFIX + key, JSON.stringify(item));
+        console.log("Cache set for:", key);
+    } catch (error) {
+        console.error("Error setting cache data for key:", key, error, "(LocalStorage might be full)");
+        // Optionally, implement a more sophisticated cache eviction strategy if storage is full
+    }
+}
+
+
+/**
+ * Retrieves the search history from localStorage.
+ * @returns {string[]} An array of city names.
+ */
+function getSearchHistory() {
+    const history = localStorage.getItem(SEARCH_HISTORY_KEY);
+    return history ? JSON.parse(history) : [];
+}
+
+/**
+ * Saves a city name to the search history in localStorage.
+ * Ensures the city is at the top, removes duplicates, and limits history size.
+ * @param {string} cityName The city name to save.
+ */
+function saveSearchToHistory(cityName) {
+    if (!cityName || typeof cityName !== 'string' || cityName.trim() === "") return;
+
+    let history = getSearchHistory();
+    // Remove any existing instance of the city to move it to the top (most recent)
+    history = history.filter(item => item.toLowerCase() !== cityName.toLowerCase());
+
+    history.unshift(cityName); // Add to the beginning
+
+    if (history.length > MAX_HISTORY_ITEMS) {
+        history = history.slice(0, MAX_HISTORY_ITEMS); // Limit to max items
+    }
+
+    localStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(history));
+    displaySearchHistory(); // Update UI after saving
+}
+
+
+// --- UI Update for Search History ---
+/**
+ * Displays search history buttons in the UI.
+ */
+function displaySearchHistory() {
+    if (!recentSearchesButtonsDiv) return;
+
+    const history = getSearchHistory();
+    recentSearchesButtonsDiv.innerHTML = ''; // Clear existing buttons
+
+    if (history.length === 0) {
+        if (clearHistoryButton) clearHistoryButton.classList.add('hidden');
+        // Optionally, display a message like "No recent searches."
+        const noHistoryMsg = document.createElement('p');
+        noHistoryMsg.textContent = "No recent searches yet.";
+        noHistoryMsg.style.fontStyle = "italic";
+        recentSearchesButtonsDiv.appendChild(noHistoryMsg);
+        return;
+    }
+
+    if (clearHistoryButton) clearHistoryButton.classList.remove('hidden');
+
+    history.forEach(cityName => {
+        const button = document.createElement('button');
+        button.textContent = cityName;
+        button.addEventListener('click', () => {
+            cityInput.value = cityName; // Populate search box
+            getCurrentWeather(cityName); // Perform search
+        });
+        recentSearchesButtonsDiv.appendChild(button);
+    });
+}
+
+
+// --- Event Listener for Geolocation Button ---
+if (geolocationButton) {
+    geolocationButton.addEventListener('click', async () => {
+        loadingIndicator.classList.remove('hidden');
+        errorMessageDiv.classList.add('hidden');
+        errorMessageDiv.textContent = '';
+        // cityInput.value = ''; // Keep city input as is, will be updated by getWeatherByCoords
+
+        try {
+            const coords = await getUserLocation();
+            console.log("Geolocation successful:", coords.latitude, coords.longitude);
+            await getWeatherByCoords(coords.latitude, coords.longitude);
+        } catch (error) { // This catch is for errors from getUserLocation itself
+            console.error("Geolocation error in button event listener:", error);
+            displayError(error.message);
+            loadingIndicator.classList.add('hidden'); // Ensure loader hidden if getUserLocation fails
+        }
+    });
+}
