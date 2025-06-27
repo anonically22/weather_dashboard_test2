@@ -1,11 +1,12 @@
 // Weather Dashboard Script
 
 // --- Constants ---
-const API_KEY = "406cea89f5b5d606ef0cd7ef8cf8edd6"; // API Key set as per user instruction
-const API_URL_CURRENT = "https://api.openweathermap.org/data/2.5/weather";
-const API_URL_FORECAST = "https://api.openweathermap.org/data/2.5/forecast";
+// API_KEY is now stored on the backend.
+const BACKEND_API_URL_BASE = "http://localhost:3000/api/weather"; // Assuming backend runs on port 3000
+const API_URL_CURRENT_PROXY = `${BACKEND_API_URL_BASE}/current`;
+const API_URL_FORECAST_PROXY = `${BACKEND_API_URL_BASE}/forecast`;
 
-console.log("Weather Dashboard script loaded. API Key set.");
+console.log("Weather Dashboard script loaded. Configured to use backend proxy.");
 
 // --- DOM Element Selectors ---
 const cityInput = document.getElementById('city-input');
@@ -51,24 +52,21 @@ async function getCurrentWeather(city) {
         return;
     }
 
-    const cacheKey = `current_${city.toLowerCase()}`;
+    const cacheKey = `current_${city.toLowerCase()}`; // Frontend cache key remains the same
     const cachedData = getCachedApiData(cacheKey);
 
     if (cachedData) {
         displayCurrentWeather(cachedData);
-        // Need to fetch forecast even if current weather is cached,
-        // unless forecast is also cached based on same city name / coords.
-        // Let's assume forecast cache will be checked within getFiveDayForecast.
-        // We need lat/lon from cachedData for the forecast call.
         await getFiveDayForecast(cachedData.name || city, cachedData.coord.lat, cachedData.coord.lon);
-        loadingIndicator.classList.add('hidden'); // Hide loader after processing cached data + new forecast
+        loadingIndicator.classList.add('hidden');
         return;
     }
 
-    const fullApiUrl = `${API_URL_CURRENT}?q=${city}&appid=${API_KEY}&units=metric`;
+    // Construct URL for backend proxy
+    const fullProxyUrl = `${API_URL_CURRENT_PROXY}?city=${encodeURIComponent(city)}`;
 
     try {
-        const response = await fetch(fullApiUrl);
+        const response = await fetch(fullProxyUrl);
 
         if (!response.ok) {
             // Try to parse error message from API first
@@ -144,10 +142,16 @@ async function getFiveDayForecast(city, lat, lon) {
         return;
     }
 
-    const fullApiUrl = `${API_URL_FORECAST}?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
+    // Construct URL for backend proxy
+    // Backend prefers lat/lon for forecast, but can accept city as fallback.
+    // Frontend already resolves city to lat/lon before calling this for city searches.
+    const fullProxyUrl = `${API_URL_FORECAST_PROXY}?lat=${lat}&lon=${lon}`;
+    // If we needed to support city-name based forecast directly from frontend to backend:
+    // const fullProxyUrl = city ? `${API_URL_FORECAST_PROXY}?city=${encodeURIComponent(city)}` : `${API_URL_FORECAST_PROXY}?lat=${lat}&lon=${lon}`;
+
 
     try {
-        const response = await fetch(fullApiUrl);
+        const response = await fetch(fullProxyUrl);
         if (!response.ok) {
             let apiErrorMessage = `HTTP error ${response.status}`;
             try {
@@ -519,11 +523,12 @@ async function getWeatherByCoords(lat, lon) {
         return;
     }
 
-    const fullApiUrlCurrent = `${API_URL_CURRENT}?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
+    // Construct URL for backend proxy
+    const fullProxyUrlCurrent = `${API_URL_CURRENT_PROXY}?lat=${lat}&lon=${lon}`;
 
     try {
         // Fetch current weather by coordinates
-        const responseCurrent = await fetch(fullApiUrlCurrent);
+        const responseCurrent = await fetch(fullProxyUrlCurrent);
         if (!responseCurrent.ok) {
             let apiErrorMessage = `HTTP error ${responseCurrent.status}`;
             try {
