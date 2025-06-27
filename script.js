@@ -1,9 +1,7 @@
 // Weather Dashboard Script
 
 // --- Constants ---
-// IMPORTANT: Replace "YOUR_API_KEY_HERE" with your actual OpenWeatherMap API key.
-// You can get one by signing up at https://openweathermap.org/appid
-const API_KEY = "YOUR_API_KEY_HERE";
+const API_KEY = "406cea89f5b5d606ef0cd7ef8cf8edd6"; // API Key set as per user instruction
 const API_URL_CURRENT = "https://api.openweathermap.org/data/2.5/weather";
 // const API_URL_FORECAST = "https://api.openweathermap.org/data/2.5/forecast"; // We'll use this later
 
