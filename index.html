@@ -22,11 +22,17 @@
                 <h3 id="current-city-name">City Name</h3>
                 <p id="current-date">Date</p>
                 <img id="current-weather-icon" src="http://openweathermap.org/img/wn/10d@2x.png" alt="Weather icon">
+                <p id="current-weather-description">Description</p>
                 <p>Temperature: <span id="current-temp">--</span>°C</p>
                 <p>Humidity: <span id="current-humidity">--</span>%</p>
                 <p>Wind Speed: <span id="current-wind">--</span> m/s</p>
             </div>
         </section>
+
+        <div id="ui-feedback-section">
+            <p id="loading-indicator" class="hidden">Loading...</p>
+            <div id="error-message" class="hidden error-box"></div>
+        </div>
 
         <section id="forecast-section">
             <h2>5-Day Forecast</h2>

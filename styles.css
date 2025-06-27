@@ -35,6 +35,12 @@ header {
     margin-bottom: 1rem;
 }
 
+#current-weather-description {
+    text-transform: capitalize;
+    margin-bottom: 0.5rem;
+    font-style: italic;
+}
+
 header h1 {
     margin: 0;
 }
@@ -124,6 +130,34 @@ header h1 {
 .forecast-card {
     /* Specific styles for forecast cards if needed */
 }
+
+#ui-feedback-section {
+    text-align: center;
+    margin: 1rem auto;
+    max-width: 400px; /* Align with current weather card width */
+}
+
+#loading-indicator {
+    padding: 0.5rem;
+    background-color: var(--primary-color-light, #e0efff); /* Lighter primary or a specific loading bg */
+    color: var(--primary-color);
+    border-radius: var(--border-radius);
+    margin-bottom: 0.5rem;
+}
+
+.error-box {
+    padding: 0.75rem;
+    background-color: #f8d7da; /* Bootstrap danger background */
+    color: #721c24; /* Bootstrap danger text */
+    border: 1px solid #f5c6cb; /* Bootstrap danger border */
+    border-radius: var(--border-radius);
+    margin-bottom: 1rem; /* Space below the error message */
+}
+
+.hidden {
+    display: none !important;
+}
+
 
 footer {
     text-align: center;
